@@ -6,12 +6,10 @@ case "$1" in
 pre)
 	[ -z "$(ls -A /usr/lib/sysusers.d)" ] && exit 0
 	grep -hEo "^(u|g).*" /usr/lib/sysusers.d/*.conf | awk '{print $1" "$2" "$3}' > /tmp/sysusers_pre
-	chmod 400							     	       /tmp/sysusers_pre
 ;;
 post)
 	[ -z "$(ls -A /usr/lib/sysusers.d)" ] && exit 0
 	grep -hEo "^(u|g).*" /usr/lib/sysusers.d/*.conf | awk '{print $1" "$2}' > /tmp/sysusers_post
-	chmod 400							     	  /tmp/sysusers_post
 	while read -r usergroup; do
 		small="${usergroup#* }"; small="${small% *}"
 		same="${usergroup##* }"; same="${same% *}"
