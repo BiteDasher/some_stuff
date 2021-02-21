@@ -1,0 +1,9 @@
+[Trigger]
+Type = Path
+Operation = Remove
+Target = usr/lib/sysusers.d/*.conf
+
+[Action]
+Description = Preparing to deleting unnecessary users and their groups...
+When = PreTransaction
+Exec = /usr/share/libalpm/scripts/sysusers pre

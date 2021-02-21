@@ -1,0 +1,9 @@
+[Trigger]
+Type = Path
+Operation = Remove
+Target = usr/lib/sysusers.d/*.conf
+
+[Action]
+Description = Deleting unnecessary users and their groups...
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/sysusers post
