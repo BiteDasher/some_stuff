@@ -1,0 +1,10 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Remove
+Target = boot/*
+
+[Action]
+Description = Updating grub configuration file...
+When = PostTransaction
+Exec = grub-mkconfig -o /boot/grub/grub.cfg
