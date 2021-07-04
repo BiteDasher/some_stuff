@@ -1,14 +1,12 @@
 _pkgname=cros-container-guest-tools
-pkgname=cros-git-me
+#pkgname=(cros-git-me cros-git-me-tast-tests cros-git-me-ansible cros-git-me-browserlinks)
+pkgname=(cros-git-me)
 pkgver=r294.a5b805f
 pkgrel=1
 pkgdesc="Linux guest tools for the Crostini containers on ChromeOS"
 arch=('any')
 license=('custom')
 depends=('openssh' 'xdg-utils' 'xkeyboard-config' 'pulseaudio' 'xxd' 'packagekit' 'dbus' 'xorg-xdpyinfo' 'xorg-xrdb' 'xorg-xsetroot' 'mailcap')
-install=cros-git-me.install
-conflicts=('cros-container-guest-tools-git')
-provides=('cros-container-guest-tools-git' 'cros-container-guest-tools')
 url="https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools"
 source=("git+${url}"
         'cros-sftp-conditions.conf'
@@ -34,7 +32,10 @@ pkgver() {
 	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
-package() {
+package_cros-git-me() {
+	conflicts=('cros-container-guest-tools-git')
+	provides=('cros-container-guest-tools-git' 'cros-container-guest-tools')
+	install=cros-git-me.install
 	# license
 	install -m644 -D ${srcdir}/${_pkgname}/LICENSE ${pkgdir}/usr/share/licenses/cros-container-guest-tools/LICENSE
 
@@ -68,15 +69,6 @@ package() {
 	install -m755 -D ${srcdir}/${_pkgname}/cros-garcon/garcon-url-handler ${pkgdir}/usr/bin/garcon-url-handler
 	install -m644 -D ${srcdir}/${_pkgname}/cros-garcon/garcon_host_browser.desktop ${pkgdir}/usr/share/applications/garcon_host_browser.desktop
 	install -m644 -D ${srcdir}/${_pkgname}/cros-garcon/skel.cros-garcon.conf ${pkgdir}/etc/skel/.config/cros-garcon.conf
-	##### PYTHON
-	#install -m644 -D ${srcdir}/${_pkgname}/cros-garcon/third_party/garcon.py ${pkgdir}/usr/share/ansible/plugins/callback/cros-garcon/garcon.py
-	#####
-	##### DEBIAN-SPECIFIC
-	#ln -sf garcon-url-handler ${pkgdir}/usr/bin/x-www-browser
-	#ln -sf www-browser ${pkgdir}/usr/bin/www-browser
-	#ln -sf gnome-www-browser ${pkgdir}/usr/bin/garcon-url-handler
-	#ln -sf x-terminal-emulator ${pkgdir}/usr/bin/garcon-terminal-handler
-	#####
 	install -m644 -D ${srcdir}/cros-garcon-conditions.conf ${pkgdir}/usr/lib/systemd/user/cros-garcon.service.d/cros-garcon-conditions.conf
 	install -m644 -D ${srcdir}/cros-garcon.hook ${pkgdir}/usr/share/libalpm/hooks/cros-garcon.hook
 	ln -sf ../cros-garcon.service ${pkgdir}/usr/lib/systemd/user/default.target.wants/cros-garcon.service
@@ -155,7 +147,7 @@ package() {
 	sed -i 's/%sudo/%wheel/1' ${pkgdir}/etc/sudoers.d/10-cros-nopasswd
 
 	### cros-systemd-overrides -> included into cros-container-guest-tools.install
-	### cros-tast-tests -> not applicable
+	### cros-tast-tests -> see package_cros-git-me-tast-tests
 
 	### cross-ui-config
 	install -m644 -D ${srcdir}/${_pkgname}/cros-ui-config/01-cros-ui ${pkgdir}/etc/dconf/db/local.d/01-cros-ui
@@ -167,4 +159,34 @@ package() {
 	### cros-wayland
 	install -m644 -D ${srcdir}/${_pkgname}/cros-wayland/10-cros-virtwl.rules ${pkgdir}/usr/lib/udev/rules.d/10-cros-virtwl.rules
 	install -m644 -D ${srcdir}/${_pkgname}/cros-wayland/skel.weston.ini ${pkgdir}/etc/skel/.config/weston.ini
+}
+package_cros-git-me-tast-tests() {
+	pkgdesc='X11 and Wayland tests for Crostini'
+	depends=("cros-git-me")
+	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/wayland_demo.desktop \
+		${pkgdir}/usr/share/applications/wayland_demo.desktop
+	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/wayland_demo_fixed_size.desktop \
+		${pkgdir}/usr/share/applications/wayland_demo_fixed_size.desktop
+	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/x11_demo.desktop \
+		${pkgdir}/usr/share/applications/x11_demo.desktop
+	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/x11_demo_fixed_size.desktop \
+		${pkgdir}/usr/share/applications/x11_demo_fixed_size.desktop
+	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/wayland_demo.png \
+		${pkgdir}/usr/share/pixmaps/wayland_demo.png
+	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/x11_demo.png \
+		${pkgdir}/usr/share/pixmaps/x11_demo.png
+}
+package_cros-git-me-ansible() {
+	pkgdesc='Ansible files for cros-git-me'
+	depends=("cros-git-me" "python" "ansible")
+	install -m644 -D ${srcdir}/${_pkgname}/cros-garcon/third_party/garcon.py ${pkgdir}/usr/share/ansible/plugins/callback/cros-garcon/garcon.py
+}
+package_cros-git-me-browserlinks() {
+	pkgdesc='Debian-specific links for browsers'
+	depends=("cros-git-me")
+	mkdir -p ${pkgdir}/usr/bin
+	ln -sf garcon-url-handler ${pkgdir}/usr/bin/x-www-browser
+	ln -sf www-browser ${pkgdir}/usr/bin/www-browser
+	ln -sf gnome-www-browser ${pkgdir}/usr/bin/garcon-url-handler
+	ln -sf x-terminal-emulator ${pkgdir}/usr/bin/garcon-terminal-handler
 }
