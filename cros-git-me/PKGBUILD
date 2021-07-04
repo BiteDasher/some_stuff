@@ -162,7 +162,7 @@ package_cros-git-me() {
 }
 package_cros-git-me-tast-tests() {
 	pkgdesc='X11 and Wayland tests for Crostini'
-	depends=("cros-git-me")
+	depends=("cros-git-me" "wayland" "xorg-xwayland")
 	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/wayland_demo.desktop \
 		${pkgdir}/usr/share/applications/wayland_demo.desktop
 	install -m644 -D ${srcdir}/${_pkgname}/cros-tast-tests/wayland_demo_fixed_size.desktop \
