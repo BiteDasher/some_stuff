@@ -1,0 +1,3 @@
+#: 
+msgid "This file is not executable. This is"
+msgstr "Это не исполняемый файл. Это"
