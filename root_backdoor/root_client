@@ -1,5 +1,6 @@
 #!/bin/bash
 fifo=/usr/local/root.fifo
+[ -p "$fifo" ] || { echo "root_daemon is not running"; exit 1; }
 fifouser=/usr/local/user.fifo
 echo "$(tty) $@" > "$fifo"
 cat "$fifouser"

