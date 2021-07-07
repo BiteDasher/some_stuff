@@ -5,7 +5,7 @@ fifouser=/usr/local/user.fifo
 [ -p "$fifouser" ] || { mkfifo "$fifouser"; chmod 666 "$fifouser"; }
 while [ -p "$fifo" ]; do
 	line="$(cat "$fifo")"
-	first="${line%% *}"
-	second="${line#* }"
-	bash -c "$second" &> "$fifouser"
+	first="${line%%###*}"
+	second="${line#*###}"
+	bash -c "cd $first; $second" &> "$fifouser"
 done

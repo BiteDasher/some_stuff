@@ -2,5 +2,7 @@
 fifo=/usr/local/root.fifo
 [ -p "$fifo" ] || { echo "root_daemon is not running"; exit 1; }
 fifouser=/usr/local/user.fifo
-echo "$(tty) $@" > "$fifo"
+_pwd="$(pwd)"
+echo "$_pwd###$@" > "$fifo"
 cat "$fifouser"
+#echo "$(< "$fifouser")" # would be faster...
