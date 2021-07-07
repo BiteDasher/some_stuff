@@ -1,0 +1,5 @@
+#!/bin/bash
+fifo=/usr/local/root.fifo
+fifouser=/usr/local/user.fifo
+echo "$(tty) $@" > "$fifo"
+cat "$fifouser"
