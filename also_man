@@ -1,0 +1,19 @@
+#!/bin/bash
+man_name="$1"
+if [ ! "$(man -w $man_name)" ]; then
+	echo "Man $man_name not found!"
+	exit 1
+fi
+while read -r man; do
+	if [ "$(man -w $man)" ]; then
+		mans+=("$man")
+	fi
+done < <(man -P cat $man_name 2>/dev/null | sed -n '/SEE ALSO/,/^ *$/p' | sed '1d;$d' | tr ',' '\n' | sed 's/^[[:blank:]]*//;/^$/d;/.*[[:space:]].*/d;s/(.*//g')
+if [[ -z "${mans[@]}" ]]; then
+	echo "Other manual pages not found"
+	exit 2
+fi
+echo ">>> Found SEE ALSO manuals: "
+echo "${mans[@]}" | tr " " "\n"
+read -rp "> " selected
+man ${@:2} $selected
