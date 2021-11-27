@@ -44,4 +44,4 @@ for dir in ${_PATH}; do
 done
 }
 
-find $(echo_path) -maxdepth 1 ${arg[@]} | grep -o -- '[^/]*$' | grep --color -- "${search}"
+find $(echo_path) -maxdepth 1 "${arg[@]}" | grep -o -- '[^/]*$' | grep --color -- "${search}"
