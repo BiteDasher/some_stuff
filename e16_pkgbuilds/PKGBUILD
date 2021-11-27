@@ -1,0 +1,85 @@
+pkgname=enlightenment16
+pkgver=1.0.24
+_themever=1.0.2
+_keyver=0.9
+_menuver=0.0.3
+_epver=0.16
+pkgrel=1
+pkgdesc="A fast, flexible, and very extensible Window Manager"
+arch=('x86_64' 'i686')
+url="http://www.enlightenment.org"
+license=('BSD' 'custom')
+makedepends=(
+  'autoconf'
+  'automake'
+  'make'
+  'patch'
+)
+depends=(
+  'imlib2'
+  'pango'
+  'gtk2'
+  'libpulse'
+  'dbus'
+  'libsndfile'
+  'libxdamage'
+  'libxft'
+  'libxinerama'
+  'libxrandr'
+  'libxcomposite'
+  'perl'
+)
+source=("http://downloads.sourceforge.net/sourceforge/enlightenment/e16-${pkgver}.tar.gz"
+        "http://downloads.sourceforge.net/enlightenment/e16-themes-${_themever}.tar.gz"
+        "http://downloads.sourceforge.net/enlightenment/e16-keyedit-${_keyver}.tar.gz"
+	"http://downloads.sourceforge.net/enlightenment/e16-epplets-${_epver}.tar.gz")
+sha256sums=('e5309b1a77595a5fe9c29231bf91057093b0b96eb592d2d6805fb6e556a2735a'
+          '7ffdff5c1fa4a13c70715356c952256487d0d64f0ea513e75611ca6e613e7285'
+          'c18732866c54d7f85245128d7b6d6ac8078af9d28f9193255f9c690798e4b096'
+	  '1eb8ab8bc3a25a4684cef7634fbdc410fa1ae4074c6f89c154d5510750006ff0')
+
+build() {
+  pushd e16-${pkgver}
+  ./configure --prefix=/usr \
+              --sysconfdir=/etc \
+              --enable-sound-pulse \
+              --enable-dbus \
+              --enable-glx \
+              --enable-modules \
+              --disable-docs
+  make
+  popd
+  
+  pushd e16-themes-${_themever}
+  ./configure --prefix=/usr
+  popd
+
+  pushd e16-keyedit-${_keyver}
+  ./configure --prefix=/usr --sysconfdir=/etc
+  make
+  popd
+
+  pushd e16-epplets-${_epver}
+  ./configure --prefix=/usr --sysconfdir=/etc
+  make
+  popd
+}
+
+package() {
+  cd e16-${pkgver}
+  make DESTDIR="${pkgdir}" install
+  ln -s "${pkgdir}/usr/share/e16/misc/Xclients.e16-gnome.sh" "${pkgdir}/usr/bin/e16-gnome"
+  ln -s "${pkgdir}/usr/share/e16/misc/Xclients.e16-kde.sh" "${pkgdir}/usr/bin/e16-kde"
+  #ln -s "${pkgdir}/usr/share/e16/misc/e16-dbus-cmd" "${pkgdir}/usr/bin/e16-dbus-cmd"
+  install -D -m644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+  install -D -m644 fonts/COPYRIGHT.Vera "${pkgdir}/usr/share/licenses/${pkgname}/COPYRIGHT.Vera"
+
+  cd "${srcdir}/e16-themes-${_themever}"
+  make DESTDIR="${pkgdir}" install
+
+  cd "${srcdir}/e16-keyedit-${_keyver}"
+  make DESTDIR="${pkgdir}" install
+
+  cd "${srcdir}/e16-epplets-${_epver}"
+  make DESTDIR="${pkgdir}" install
+}

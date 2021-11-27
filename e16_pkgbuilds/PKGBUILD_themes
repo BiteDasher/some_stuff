@@ -1,0 +1,34 @@
+pkgname=enlightenment16-extra-themes
+pkgver=16.nover.214f6193
+pkgrel=1
+pkgdesc="Extra themes for E16"
+arch=('any')
+url="https://github.com/dharrop/themes"
+license=('custom')
+options=(!strip)
+makedepends=('git')
+depends=(
+  'enlightenment16'
+)
+source=("e16-themes-extra::git+https://github.com/dharrop/themes.git")
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}/e16-themes-extra"
+  echo "16.nover.$(git rev-parse --short HEAD)"
+}
+package() {
+  mkdir -p -m 755 "${pkgdir}/usr/share/e16/themes"
+  cd "${srcdir}/e16-themes-extra"
+  for _theme in *; do
+    [ -d ./"$_theme" ] || continue
+    [ -d "/usr/share/e16/themes/$_theme" ] && continue
+    if [ ./"$_theme"/e16 ]; then
+      _install=./"$_theme"/e16
+    else
+      _install=./"$_theme"
+    fi
+    [ -f "$_install"/init.cfg ] || { echo "$_theme"; continue; }
+    cp -a -x "$_install" -T "${pkgdir}/usr/share/e16/themes/$_theme"
+  done
+}
