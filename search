@@ -1,0 +1,47 @@
+#!/bin/bash
+__args="$@"
+do_arg=0
+stop_o=0
+[ "$1" ] || exit 1
+while [ -n "$1" ]; do
+	if [[ "$1" == /* ]]; then
+		[ "$1" == / ] && { shift; continue; }
+		pathes="$pathes:$1"
+		shift
+		continue
+	fi
+	if [ "$stop_o" == 0 ]; then
+		if [[ "$1" == '-o' ]]; then
+			do_arg=1
+			shift
+			continue
+		fi
+	fi
+	if [[ "$1" == '--' ]]; then
+		stop_o=1
+		shift
+		continue
+	fi
+	if [ -z "$search" ]; then
+		search="$1"
+		shift
+		continue
+	else
+		search="$search $1"
+		shift
+		continue
+	fi
+done
+[ "$do_arg" == 1 ] && arg=('-iname' '*'${search}'*')
+[ -n "$pathes" ] && _PATH="$pathes" || _PATH="$PATH"
+[[ ! "$pathes" && "$__args" == */* ]] && exit 1
+
+echo_path() {
+local IFS=':'
+for dir in ${_PATH}; do
+	[ -d "$dir" ] || continue
+	echo $dir
+done
+}
+
+find $(echo_path) -maxdepth 1 ${arg[@]} | grep -o -- '[^/]*$' | grep --color -- "${search}"
