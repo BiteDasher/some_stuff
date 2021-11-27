@@ -6,7 +6,7 @@ arch=('any')
 url="https://github.com/dharrop/themes"
 license=('custom')
 options=(!strip)
-makedepends=('git')
+makedepends=('git' 'grep')
 depends=(
   'enlightenment16'
 )
@@ -22,7 +22,11 @@ package() {
   cd "${srcdir}/e16-themes-extra"
   for _theme in *; do
     [ -d ./"$_theme" ] || continue
-    [ -d "/usr/share/e16/themes/$_theme" ] && continue
+    if [ -n "$(pacman -Q enlightenment16)" ]; then
+	    if [ -n "$(pacman -Qlq enlightenment16 | grep -o '/themes/.*' | cut -d '/' -f 3 | grep "$_theme")" ]; then
+    		continue
+      fi
+    fi
     if [ ./"$_theme"/e16 ]; then
       _install=./"$_theme"/e16
     else
