@@ -43,7 +43,6 @@ build() {
   pushd ./scripts
   sed 's/$Prefixes = "\/usr\/local:/$Prefixes = "\/usr\/local:\/var\/lib\/flatpak\/exports:/' -i e_gen_menu
   sed "s/\$Prefixes = \"\$Prefixes:\$ENV{'HOME'}\/.local/\$Prefixes = \"\$Prefixes:\$ENV{'HOME'}\/.local:\$ENV{'HOME'}\/.local\/share\/flatpak\/exports/" -i e_gen_menu
-  sed "s/@CatsRemove = (/@CatsRemove = (\"OnlyShowIn\"\,/" -i e_gen_menu
   sed "s/48:32:24:16/128:72:64:48:32:24:16/" -i e_gen_menu
   sed "s/default.kde:gnome:hicolor:Adwaita/default.kde:gnome:hicolor:Adwaita:breeze/" -i e_gen_menu
   popd
