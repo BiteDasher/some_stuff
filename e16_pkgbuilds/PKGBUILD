@@ -14,6 +14,7 @@ makedepends=(
   'automake'
   'make'
   'patch'
+  'xmlto'
 )
 depends=(
   'imlib2'
