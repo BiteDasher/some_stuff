@@ -1,3 +1,4 @@
 #!/bin/sh
-/usr/bin/gnome-keyring-daemon --daemonize --login
+/usr/bin/gnome-keyring-daemon --daemonize --login --replace &
+disown -a
 exec /usr/bin/gnome-keyring-daemon --start --components=ssh,pkcs11,secrets
