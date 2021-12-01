@@ -52,7 +52,7 @@ build() {
               --enable-dbus \
               --enable-glx \
               --enable-modules \
-              --disable-docs
+              --enable-docs
   make
   popd
   
